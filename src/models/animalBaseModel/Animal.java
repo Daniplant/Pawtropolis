@@ -1,4 +1,4 @@
-package models;
+package models.animalBaseModel;
 
 import java.time.LocalDate;
 

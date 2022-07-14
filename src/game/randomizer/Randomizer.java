@@ -1,44 +1,55 @@
 package game.randomizer;
 
-import animals.Eagle;
-import animals.Tiger;
 import game.items.template.Item;
 import game.map.room.Room;
 import game.map.room.door.Entrance;
-import models.Animal;
+import models.animalBaseModel.Animal;
 import zoo.Zoo;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Randomizer {
     // This is only a class for randomize everything that I need,
-    private Random random;
 
-    public Randomizer(){
-        random = new Random();
-    }
-
-    public String randomizeString(List<String> field){
-        return field.get(this.random.nextInt(field.size()-1));
+    private Randomizer(){
     }
 
 
-    public Item randomizeItem(List<Item> field){
-        return field.get(this.random.nextInt(field.size()-1));
+    public static <T> T randomize(List<T> list){
+        Random random = new Random();
+        return list.get(random.nextInt(list.size()));
+        //return list.get(random.nextInt(list.size()-1));
     }
 
-    public List<Item> randomizeItems(List<Item> field){
-        List<Item> randomItems = new ArrayList<>();
-        int items = this.random.nextInt(field.size()-1);
+    public static <T>  List<T> randomizeRange(List<T> list, int range, boolean areUnique){
+       range = (range > list.size() && areUnique) ? list.size(): range;
 
-        for (int i = 0; i < items; i++){
-            randomItems.add(field.get(this.random.nextInt(field.size()-1)));
+        Random random = new Random();
+        List<T> randomList;
+        List<Integer> usedItems;
+        int randomNumber;
+
+        usedItems = new ArrayList<>();
+        randomList = new ArrayList<>();
+
+        int i = 0;
+        while (i < range){
+            randomNumber = random.nextInt(list.size()-1);
+            if (areUnique){
+                if (!usedItems.contains(randomNumber)){
+                    randomList.add(list.get(randomNumber));
+                    usedItems.add(randomNumber);
+                    i++;
+                }
+            }
+            else {
+                randomList.add(list.get(randomNumber));
+                i++;
+            }
         }
-        return randomItems;
+        return randomList;
     }
 
     public LocalDate randomizeDate(LocalDate minDate, LocalDate maxDate) {
@@ -51,50 +62,50 @@ public class Randomizer {
 
     }
 
-    public Animal randomizeAnimal(List<String> fieldName, List<String> fieldFavoriteFood, int maxAge, float maxWeight,
-                                  float maxHeight, LocalDate minDate, LocalDate maxDate){
-        Animal randomAnimal;
+    public static int randomizeInteger(int maxNumber){
+        Random random = new Random();
+        return random.nextInt(maxNumber);
+    }
 
-        if(this.random.nextInt(2) == 0) {
-            randomAnimal = new Tiger(randomizeString(fieldName),randomizeString(fieldFavoriteFood), this.random.nextInt(maxAge)
-            ,this.random.nextFloat() * (maxWeight), this.random.nextFloat() * (maxHeight), randomizeDate(minDate,maxDate),
-                    this.random.nextFloat());
-        }
+    public static Zoo randomizeZoo(Zoo zoo, int rangePerSpecie){
+        // TODO: trova un modo per randomizzare lo zoo [x]
+        Random random = new Random();
+        Zoo randomZoo = new Zoo();
+        List<Class<? extends Animal>> specie = zoo.getAllSpecies();
+        int specieTotalSize = specie.size();
+        Class<? extends Animal> aimedSpecie;
 
-        else{
-            randomAnimal = new Eagle(randomizeString(fieldName),randomizeString(fieldFavoriteFood), this.random.nextInt(maxAge)
-                    ,this.random.nextFloat() * (maxWeight), this.random.nextFloat() * (maxHeight), randomizeDate(minDate,maxDate),
-                    this.random.nextFloat());
+        for (int i = 0; i < specieTotalSize; i++){
+            aimedSpecie = randomize(specie);
+            for (int j = 0; j < rangePerSpecie; j++){
+                 // attento che se specie.size è 1 allora darà un throw error
+                randomZoo.addAnimal(zoo.getAnimal(aimedSpecie, random.nextInt(zoo.getAllAnimalsFrom(aimedSpecie).size())));
             }
+            specie.remove(aimedSpecie);
 
-        return randomAnimal;
-    }
-
-    public Zoo randomizeAnimals(List<Animal> animals, int size){
-        Zoo randAnimals = new Zoo();
-        int sizeRandomList = this.random.nextInt(animals.size()-1);
-
-
-        for (int i = 0; i < size; i++){
-            randAnimals.addAnimal(animals.get(this.random.nextInt(animals.size()-1)));
         }
 
-        return randAnimals;
-    }
-    public Entrance randomizeEntrance(List<String> fieldEntrances){
-        return new Entrance(this.random.nextBoolean(),fieldEntrances.get(this.random.nextInt(fieldEntrances.size()-1)));
+        return randomZoo;
     }
 
-    public List<Entrance> randomizeEntrances(List<Entrance> fieldEntrances, int size){
-        List<Entrance> randomEntraces = new ArrayList<>();
-        for (int i=0;i < size; i++){
-            randomEntraces.add(fieldEntrances.get(this.random.nextInt(fieldEntrances.size()-1)));
+    public static void randomizeEntranceStates(List<Entrance> entrances){
+        Random state = new Random();
+        for (int i = 0; i < entrances.size(); i++){
+            entrances.get(i).setOpen(state.nextBoolean());
         }
-        return randomEntraces;
     }
 
-    public Room randomizeRoom(List<Item> items, List<Animal> animals, List<Entrance> entrances){
-        return new Room(randomizeItems(items),randomizeAnimals(animals, this.random.nextInt(5)),entrances);
+    public static Room randomizeRoom(List<Item> items, Zoo animals, List<Entrance> entrances){
+        List<Class<? extends Animal>> specie = animals.getAllSpecies();
+        List<Item> randItems;
+        Zoo randIAnimals;
+        List<Entrance> randEntrances;
+
+        randItems = randomizeRange(items,2,false);
+        randIAnimals = randomizeZoo(animals,2);
+        randEntrances = randomizeRange(entrances,2,false);
+
+        return new Room(randItems,randIAnimals,randEntrances);
     }
 }
 

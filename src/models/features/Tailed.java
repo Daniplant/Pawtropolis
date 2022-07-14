@@ -1,4 +1,4 @@
-package models;
+package models.features;
 
 public interface Tailed{
     public float getTailLenght();

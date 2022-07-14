@@ -1,14 +1,14 @@
 package game;
 
+import game.bag.Bag;
 import game.console.InputController;
 import game.items.template.Item;
 import game.map.room.Room;
 import game.map.room.door.Entrance;
 import game.player.Player;
 import game.randomizer.Randomizer;
-import models.Animal;
+import zoo.Zoo;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +25,7 @@ public class Game {
 
     private Randomizer rand;
 
-    private List<Animal> animalField;
+    private Zoo animalField;
 
     private List<Item> itemField;
 
@@ -33,13 +33,16 @@ public class Game {
 
     private Map<String,String> availableCommands;
 
-    public Game(List<Room> currentExploredRooms, Player player, List<Animal> animalField, List<Item> itemField, List<Entrance> entrances) {
-        this.currentExploredRooms = currentExploredRooms;
-        this.player = player;
+    private void makePlayer(){
+        System.out.println("Insert your name");
+        this.player = new Player(InputController.readString(), 10, new Bag(20));
+        System.out.println("Wealcome " + this.player.getName() + ". Enjoy your permanence at Pawtropolis! owo");
+
+    }
+    public Game(Zoo animalField, List<Item> itemField, List<Entrance> entrances) {
         this.animalField = animalField;
         this.itemField = itemField;
         this.entrances = entrances;
-        this.rand = new Randomizer();
 
         this.availableCommands = new HashMap<>();
         this.availableCommands.put("go <direction>", "Makes your character move to another room if the door is open" );
@@ -52,10 +55,10 @@ public class Game {
     public void startGame(){
         String choice = "";
         String[] buffer;
-        System.out.println("Wealcome " + player.getName() + ". Enjoy you permanence at Pawtropolis! owo");
+
         System.out.println("You have entered the first room of the game...");
 
-        currentRoom = this.rand.randomizeRoom(this.itemField,this.animalField,this.entrances);
+        currentRoom = Randomizer.randomizeRoom(this.itemField,this.animalField,this.entrances);
         this.currentExploredRooms.add(currentRoom);
 
         while (this.player.getLifePoints() != 0){
@@ -71,7 +74,7 @@ public class Game {
                     for (Entrance e : currentRoom.getEntrances()){
                         if (buffer[1].contains(e.getPosition()) && e.isOpen()){
                             System.out.println("You went to " + buffer[1]);
-                            currentRoom = this.rand.randomizeRoom(this.itemField,this.animalField,this.entrances);
+                            currentRoom = Randomizer.randomizeRoom(this.itemField,this.animalField,this.entrances);
                             currentExploredRooms.add(currentRoom);
                         }
                     }

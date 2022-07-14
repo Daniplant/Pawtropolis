@@ -1,7 +1,7 @@
 package zoo;
 
-import models.Animal;
-import models.Tailed;
+import models.animalBaseModel.Animal;
+import models.features.Tailed;
 import models.species.Feathered;
 
 import java.util.*;
@@ -12,11 +12,12 @@ public class Zoo {
 
     private Map<Class<? extends Animal>, List<? extends Animal>> animalsSpecie;
 
-    //private List<? extends Animal> animals;
+    private List<Class<? extends Animal>> species;
 
 
     public Zoo() {
         this.animalsSpecie = new HashMap<>();
+        this.species = new ArrayList<>();
         zooSize = 0;
         //this.animals = new ArrayList<>();
         System.out.println(Arrays.toString(Animal.class.getMethods()));
@@ -26,10 +27,10 @@ public class Zoo {
         List<T> alreadyPresentList = (List<T>) animalsSpecie.get(animal.getClass());
         if (alreadyPresentList == null) {
             alreadyPresentList = new ArrayList<>();
+            this.species.add(animal.getClass());
         }
         alreadyPresentList.add(animal);
         animalsSpecie.put(animal.getClass(), alreadyPresentList);
-        //System.out.println(animal.getClass().getPackage().getClass());
         zooSize++;
     }
 
@@ -64,6 +65,9 @@ public class Zoo {
         return newHashMap;
     }
 
+    public ArrayList<Class<? extends Animal>> getAllSpecies(){
+        return new ArrayList<>(this.species);
+    }
     public <T extends Animal> void removeAnimalFrom(Class<T> specie, int index) {
         if (this.animalsSpecie.get(specie).size() > index && index >= 0) {
             this.animalsSpecie.get(specie).remove(index);
@@ -85,8 +89,12 @@ public class Zoo {
 
     public int getZooSize() { return zooSize;}
 
+    public int getRaceSizeList(Class<? extends Animal> race){
+        return this.animalsSpecie.get(race).size();
+    }
+
     // Generic Animal Requests
-   public void printAllAnimals() {
+    public void printAllAnimals() {
         int i;
         boolean areTailed;
         boolean areFeathered;
@@ -122,6 +130,10 @@ public class Zoo {
            }
 
        }
+   }
+
+    public Animal getAnimal(Class<? extends Animal> race, int index){
+        return this.animalsSpecie.get(race).get(index);
    }
     public <T extends Animal> T getTheHeaviestAnimal() throws CloneNotSupportedException{
         int heaviest = 0;
@@ -315,13 +327,6 @@ public class Zoo {
     }
 
     // Specific request
-
-    /*
-    TODO : Modificare il codice in modo tale che non debba attaccarsi ai felini
-     se vogliamo fare i precisi non tutti gli animali codati sono dei felini (Le scimmie per esempio).
-     Per adesso se non vengono introdotte altre razze che sono animali codati non felini questo è decente
-     ma non mi soddisfa ma non riesco a trovare un altra soluzione
- */
     public <T extends Animal> T getTheLongestAnimalTail() throws CloneNotSupportedException {
 
         if (this.animalsSpecie.isEmpty()) {
@@ -336,7 +341,7 @@ public class Zoo {
 
 
         // filter the map, for checking only things that they make sense to check
-        // n**2
+        // O(n)
         for (Map.Entry<Class<? extends Animal>, List<? extends Animal>> entry : this.animalsSpecie.entrySet()){
             if ((entry.getValue().get(0) instanceof Tailed)){
                 filteredSpecie.put(entry.getKey(), entry.getValue());
@@ -348,7 +353,7 @@ public class Zoo {
 
 
         // find the searched value
-        // n**2
+        // O(n**2)
         for (Map.Entry<Class<? extends Animal>, List<? extends Animal>> entry : filteredSpecie.entrySet()){
             for (int i = 0; i < entry.getValue().size(); i++){
                 result = (Tailed) filteredSpecie.get(filteredSpecieKey).get(filteredSpecieIndex);

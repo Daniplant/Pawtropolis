@@ -2,9 +2,9 @@ package game.map.room;
 
 import game.items.template.Item;
 import game.map.room.door.Entrance;
-import models.Animal;
 import zoo.Zoo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
@@ -27,14 +27,18 @@ public class Room {
 
 
     public List<Item> getItems() {
-        return items;
+        return new ArrayList<>(items);
     }
 
     public Item getItem(int index){
         if (isInBounds(index)){
-            return this.items.get(index);
+            return new Item(items.get(index).getName(), items.get(index).getRequiredSlotSpace());
         }
         return null;
+    }
+
+    public void addItem(Item item){
+        this.items.add(item);
     }
 
     public void setItems(List<Item> items) {

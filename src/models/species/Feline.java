@@ -1,6 +1,6 @@
 package models.species;
 
-import models.Animal;
+import models.animalBaseModel.Animal;
 
 import java.time.LocalDate;
 

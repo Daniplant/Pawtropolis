@@ -1,6 +1,6 @@
 package animals;
 
-import models.Tailed;
+import models.features.Tailed;
 import models.species.Feline;
 
 import java.time.LocalDate;

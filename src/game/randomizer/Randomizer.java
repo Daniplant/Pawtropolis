@@ -36,7 +36,7 @@ public class Randomizer {
 
         int i = 0;
         while (i < range){
-            randomNumber = random.nextInt(list.size()-1);
+            randomNumber = random.nextInt(list.size());
             if (areUnique){
                 if (!usedItems.contains(randomNumber)){
                     randomList.add(list.get(randomNumber));
@@ -95,15 +95,16 @@ public class Randomizer {
         }
     }
 
-    public static Room randomizeRoom(List<Item> items, Zoo animals, List<Entrance> entrances){
+    public static Room randomizeRoom(List<Item> items, Zoo animals, List<Entrance> entrances,
+                                     int rangeItem, int rangeAnimals, int rangeEntrances){
         List<Class<? extends Animal>> specie = animals.getAllSpecies();
         List<Item> randItems;
         Zoo randIAnimals;
         List<Entrance> randEntrances;
 
-        randItems = randomizeRange(items,2,false);
-        randIAnimals = randomizeZoo(animals,2);
-        randEntrances = randomizeRange(entrances,2,false);
+        randItems = randomizeRange(items,rangeItem,false);
+        randIAnimals = randomizeZoo(animals,rangeAnimals);
+        randEntrances = randomizeRange(entrances,rangeEntrances,true);
 
         return new Room(randItems,randIAnimals,randEntrances);
     }

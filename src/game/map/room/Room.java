@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
+    // TODO: le stanze dovrebbe contenere le stanze adiacenti
+    // come le linked list
     private List<Item> items;
     private Zoo animals;
     private List<Entrance> entrances;
@@ -24,10 +26,10 @@ public class Room {
         this.animals = animals;
         this.entrances = entrances;
     }
-
+    
 
     public List<Item> getItems() {
-        return new ArrayList<>(items);
+        return  this.items;
     }
 
     public Item getItem(int index){
@@ -60,7 +62,6 @@ public class Room {
     public List<Entrance> getEntrances() {
         return entrances;
     }
-
     public void setEntrances(List<Entrance> entrances) {
         this.entrances = entrances;
     }

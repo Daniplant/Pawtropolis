@@ -1,6 +1,7 @@
 package game.items.template;
 
 public class Item {
+    // TODO : cerca di rendere astratto ITEM perché non dovrebbe essere possibile istanzairlo
     private String name;
     private String description;
 
@@ -32,5 +33,4 @@ public class Item {
     public int getRequiredSlotSpace() {
         return requiredSlotSpace;
     }
-
 }

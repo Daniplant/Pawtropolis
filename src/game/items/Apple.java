@@ -9,7 +9,7 @@ public class Apple extends Item implements Consumable {
 
     public Apple(String name, int requirementSpace) {
         super(name, requirementSpace);
-        this.setDescription("Description : a common apple that gives you 20HP");
+        this.setDescription("a common apple that gives you 20HP");
         canBeConsumed = true;
     }
 

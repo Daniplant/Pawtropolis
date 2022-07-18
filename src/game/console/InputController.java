@@ -11,7 +11,8 @@ public class InputController {
     private InputController() {
 
     }
-    public static String readString() {
+    public static String readString(String text) {
+        if (!text.equals("")) System.out.println(text);
         InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader inputReader = new BufferedReader(input);
 

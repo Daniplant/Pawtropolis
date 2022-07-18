@@ -59,6 +59,10 @@ public class Bag {
         return false;
     }
 
+    public Boolean deleteItem(Item item){
+        return this.itemList.remove(item);
+    }
+
     public Boolean dropItem(int index, Room room){
         // non mi ispisra il delete item:
         // se l'item viene messo nella stanza e poi

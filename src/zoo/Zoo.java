@@ -19,8 +19,6 @@ public class Zoo {
         this.animalsSpecie = new HashMap<>();
         this.species = new ArrayList<>();
         zooSize = 0;
-        //this.animals = new ArrayList<>();
-        System.out.println(Arrays.toString(Animal.class.getMethods()));
     }
 
     public <T extends Animal> void addAnimal(T animal) {
@@ -47,7 +45,7 @@ public class Zoo {
         //return (List<T>) this.animalsSpecie.get(specie);
     }
 
-    public <T extends Animal> Map<String, List<T>> getAllAnimals() {
+    public <T extends Animal> Map<String, List<T>> cloneAllAnimals() {
         /*
             Ho riflettuto riguardo al dare la copia oppure la vera mappa dello zoo:
             Secondo me non ha molto senso se, io gestore, offro a qualcuno la possibilità di cambiare
@@ -63,6 +61,14 @@ public class Zoo {
             }
         }
         return newHashMap;
+    }
+
+    public <T extends Animal>  List<T> getAllAnimals(){
+        List<Animal> allAnimals = new ArrayList<>();
+        for (Class<? extends Animal> specie : this.species){
+            allAnimals.addAll(getAllAnimalsFrom(specie));
+        }
+        return (List<T>) allAnimals;
     }
 
     public ArrayList<Class<? extends Animal>> getAllSpecies(){

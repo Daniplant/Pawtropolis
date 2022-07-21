@@ -14,12 +14,11 @@ public class Key extends Item implements KeyItem {
     }
 
     @Override
-    public boolean useKey(Entrance entrance) {
+    public void useKey(Entrance entrance) {
         if (!entrance.isOpen()){
             entrance.setOpen(true);
         }
         isUsable = false;
-        return false;
     }
 
     @Override

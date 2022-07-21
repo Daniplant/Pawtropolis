@@ -4,15 +4,15 @@ import game.items.template.Item;
 import game.map.room.door.Entrance;
 import zoo.Zoo;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Room {
     // TODO: le stanze dovrebbe contenere le stanze adiacenti
     // come le linked list
     private List<Item> items;
     private Zoo animals;
-    private List<Entrance> entrances;
+    private Set<Entrance> entrances;
 
     private boolean isInBounds(int index){
         if (index < this.items.size()){
@@ -21,20 +21,22 @@ public class Room {
         return false;
     }
 
-    public Room(List<Item> items,Zoo animals, List<Entrance> entrances) {
+    public Room(List<Item> items, Zoo animals, Set<Entrance> entrances) {
         this.items = items;
         this.animals = animals;
         this.entrances = entrances;
     }
-    
+
 
     public List<Item> getItems() {
-        return  this.items;
+        return this.items;
     }
 
-    public Item getItem(int index){
-        if (isInBounds(index)){
-            return new Item(items.get(index).getName(), items.get(index).getRequiredSlotSpace());
+    public Item getItem(String itemToBeSearched){
+        for (Item item : this.items){
+            if (item.getName().equals(itemToBeSearched)){
+                return item;
+            }
         }
         return null;
     }
@@ -47,25 +49,21 @@ public class Room {
         this.items = items;
     }
 
-    public void removeItem(int index) {
-        if (isInBounds(index)){
-            this.items.remove(index);
-        }
-    }
-
     public Zoo getAnimals() {
         return animals;
     }
 
     public void setAnimals(Zoo animals) {this.animals = animals;}
 
-    public List<Entrance> getEntrances() {
+    public Set<Entrance> getEntrances() {
         return entrances;
     }
-    public void setEntrances(List<Entrance> entrances) {
+    public void setEntrances(Set<Entrance> entrances) {
         this.entrances = entrances;
     }
 
-
+    public Boolean deleteItem(String itemName){
+        return this.items.remove(getItem(itemName));
+    }
 
 }

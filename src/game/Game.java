@@ -1,7 +1,6 @@
 package game;
 import game.bag.Bag;
 import game.console.InputController;
-import game.console.OutputController;
 import game.items.template.Item;
 import game.items.types.Consumable;
 import game.items.types.KeyItem;
@@ -17,6 +16,7 @@ import java.util.function.Function;
 
 
 public class Game {
+    Random random;
 
     private List<Room> currentExploredRooms;
 
@@ -29,7 +29,7 @@ public class Game {
 
     private List<Item> itemField;
 
-    private List<Entrance> entrancesField;
+    private Set<Entrance> entrancesField;
 
     // TODO: Opzionale:
     // cerca la classe che racchiude tutte le funzioni e non Object
@@ -38,15 +38,16 @@ public class Game {
 
 
     private void makePlayer(){
-        this.player = new Player(InputController.readString("Insert you name : "), 10, new Bag(20));
-        System.out.println("Wealcome "  + player.getName()  + " Enjoy your permanence at Pawtropolis! owo");
+        this.player = new Player(InputController.readString("Insert you name : "), 100, new Bag(20));
+        System.out.println("Welcome "  + "'" + player.getName() + "'" + " Enjoy your permanence at Pawtropolis! owo");
 
     }
-    public Game(Zoo animalField, List<Item> itemField, List<Entrance> entrances) {
+    public Game(Zoo animalField, List<Item> itemField, Set<Entrance> entrances) {
         this.animalField = animalField;
         this.itemField = itemField;
         this.entrancesField = entrances;
         this.currentExploredRooms = new ArrayList<>();
+        random = new Random();
 
         this.availableCommands = new HashMap<>();
         this.availableCommands.put("help : prints all the commands available", (Runnable) this::printAllCommands);
@@ -57,7 +58,7 @@ public class Game {
         this.availableCommands.put("look : check the current room", (Runnable) this::printAllRoomInfo); //x
         this.availableCommands.put("use <Item> : use an item on you bag", (Function<String, Boolean>) this::useItem); //x
         this.availableCommands.put("distance : print how much rooms have you moved from the start", (Runnable) this::printExploredRooms); //x
-        this.availableCommands.put("status : prints you player status", (Runnable) this::printPlayerStatus);
+        this.availableCommands.put("status : prints your player status", (Runnable) this::printPlayerStatus);
         // back function
         // inspect function (In bag)
 
@@ -66,6 +67,7 @@ public class Game {
 
 
     public void startGame(){
+
         String choice = "";
         String[] userCommand;
         boolean found = false;
@@ -75,7 +77,7 @@ public class Game {
         makePlayer();
 
         currentRoom = Randomizer.randomizeRoom(this.itemField,this.animalField,this.entrancesField,
-                2,2,2);
+                this.random.nextInt(this.itemField.size()),2,this.entrancesField.size());
         this.currentExploredRooms.add(currentRoom);
         while (this.player.getLifePoints() != 0){
 
@@ -166,13 +168,16 @@ public class Game {
         return output.toString();
     }
 
+
     public Boolean nextRoom(String entranceLocation){
         for (Entrance entrance : currentRoom.getEntrances()){
             if (entrance.getPosition().equals(entranceLocation)){
                 if (entrance.isOpen()){
                     this.currentExploredRooms.add(this.currentRoom);
+                    // TODO: RAndomizza bene il parametro degl'animali
                     this.currentRoom = Randomizer.randomizeRoom(this.itemField, this.animalField, this.entrancesField,
-                            2,2,2);
+                            this.random.nextInt(this.itemField.size())
+                            ,2,random.nextInt(this.entrancesField.size()));
                     System.out.println("You've entered another room");
                     return true;
                 }
@@ -188,16 +193,9 @@ public class Game {
     }
 
     public Boolean pickItem(String itemName){
-        // TODO : crea una funzione che cerca un item in una stanza dentro ROom
-        for (Item item : this.currentRoom.getItems()){
-            if (item.getName().equals(itemName)){
-                this.player.getBag().addItem(item);
-                this.currentRoom.getItems().remove(item);
-                System.out.println("Item grabbed");
-                return true;
-            }
-        }
-        return false;
+        this.player.getBag().addItem(this.currentRoom.getItem(itemName));
+        System.out.println("Item has been picked");
+        return this.currentRoom.deleteItem(itemName);
     }
     public Boolean dropItem(String itemName){
         for (Item item : this.player.getBag().getItemList()){
@@ -228,7 +226,7 @@ public class Game {
                         selectedEntrance = InputController.readString("select the door position");
                         for (Entrance entrance : this.currentRoom.getEntrances()){
                             if (entrance.getPosition().equals(selectedEntrance)){
-                                entrance.setOpen(true);
+                                ((KeyItem) item).useKey(entrance);
                                 this.player.getBag().deleteItem(item);
                                 System.out.println("The door has been opened");
                                 return true;

@@ -2,27 +2,18 @@ import animals.Eagle;
 import animals.Lion;
 import animals.Tiger;
 import game.Game;
-import game.bag.Bag;
 import game.items.Apple;
 import game.items.Key;
 import game.items.template.Item;
-import game.items.types.Consumable;
-import game.map.room.Room;
 import game.map.room.door.Entrance;
-import game.randomizer.Randomizer;
-import models.animalBaseModel.Animal;
 import zoo.Zoo;
 
-import java.awt.desktop.AppForegroundListener;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class Main {
-    public static void main(String[] args) throws CloneNotSupportedException {
+    public static void main(String[] args) {
 
         Random rand = new Random();
 
@@ -39,7 +30,7 @@ public class Main {
                 "Sushi", "Miele", "Anguille", "Spaghetti", "Bananane", "Grasso", "Abbacchio",
                 "Ciambellone", "Cozze", "Mozzarelle", "Carciofini", "risotto nero"};
 
-        String[] possibleEntrances = {"north", "south", "east", "ovest"};
+        String[] possibleEntrances = {"north", "east", "ovest"};
 
         // creation of the zoo
         int zooSize = 12;
@@ -70,7 +61,7 @@ public class Main {
         Zoo zoo = new Zoo();
 
         List<Item> items = new ArrayList<>();
-        List<Entrance> entrances = new ArrayList<>();
+        Set<Entrance> entrances = new HashSet<>();
 
         for (int i = 0; i < possibleEntrances.length; i++){
             entrances.add(new Entrance(rand.nextBoolean(), possibleEntrances[i]));
@@ -112,9 +103,14 @@ public class Main {
        items.add(new Apple("common apple",2));
        items.add(new Key("pawtropolis key",10));
 
-        Game newGame = new Game(zoo,items,entrances);
+        Game newGame = new Game(zoo, items,entrances);
         newGame.startGame();
 
-
+        /* TODO priorità :
+        // fare pulizia del codice []
+        // cambiare le liste in sets dove è necessario [x]
+        // guarda la classe game dei todo [x]
+           implementa bene ROOM (Guarda la classe Room) []
+        */
     }
 }

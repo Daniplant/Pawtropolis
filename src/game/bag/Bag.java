@@ -4,7 +4,9 @@ import game.items.template.Item;
 import game.map.room.Room;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Bag {
 
@@ -31,13 +33,13 @@ public class Bag {
         return this.getTotalSlots() - this.slotUsed;
     }
 
-    public Item getItem(int index){
-        if (index < this.itemList.size()){
-            return this.itemList.get(index);
+    public Item getItem(String name){
+        for (Item item : this.itemList){
+            if (item.getName().equals(name)){
+                return item;
+            }
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     public Boolean addItem(Item item){
@@ -50,10 +52,9 @@ public class Bag {
     }
 
 
-    public Boolean deleteItem(int index){
-        if (index < this.itemList.size()){
-            this.slotUsed -= this.itemList.get(index).getRequiredSlotSpace();
-            this.itemList.remove(index);
+    public Boolean deleteItem(String name){
+        if (getItem(name) != null){
+            this.itemList.remove(getItem(name));
             return true;
         }
         return false;
@@ -63,28 +64,12 @@ public class Bag {
         return this.itemList.remove(item);
     }
 
-    public Boolean dropItem(int index, Room room){
+    public Boolean dropItem(Item item, Room room){
         // non mi ispisra il delete item:
         // se l'item viene messo nella stanza e poi
         // accade che l'oggetto non venga cancellato?
-        room.addItem(searchItemByIndex(index));
-        return deleteItem(index);
-}
-
-    public Item searchItemByName(String name){
-        for (Item item  : this.itemList){
-            if (item.getName().equals(name)){
-                return item;
-            }
-        }
-        return null;
-    }
-
-    public Item searchItemByIndex(int index){
-        if (index < this.itemList.size()){
-            return this.itemList.get(index);
-        }
-        return null;
+        room.addItem(item);
+        return deleteItem(item);
     }
 
     public <T extends Item>List<Item> searchItemsByType(Class<T> item){

@@ -1,7 +1,6 @@
 package game.items.template;
 
-public class Item {
-    // TODO : cerca di rendere astratto ITEM perché non dovrebbe essere possibile istanzairlo
+public abstract class Item {
     private String name;
     private String description;
 

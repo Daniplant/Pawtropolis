@@ -9,6 +9,7 @@ import game.map.Room;
 import game.map.room.door.Entrance;
 import game.map.gameMap.GameMap;
 import game.player.Player;
+import game.randomizer.Randomizer;
 import models.animalBaseModel.Animal;
 import zoo.Zoo;
 
@@ -190,23 +191,29 @@ public class Game {
 
 
     public Boolean goToTheNextRoom(String entranceLocation){
-        for (Entrance entrance : currentRoom.getEntrances()){
-            if (entrance.getPosition().equals(entranceLocation)){
-                if (entrance.isOpen()){
-                    this.currentExploredRooms.add(this.currentRoom);
+        Boolean hasMoved = false;
+
+        if (this.currentRoom.getEntrance(entranceLocation) != null){
+            if (this.currentRoom.getEntrance(entranceLocation).isOpen()){
+                if (this.currentRoom.getEntrance(entranceLocation).getNextRoom() != null){
                     this.currentRoom = this.currentRoom.getEntrance(entranceLocation).getNextRoom();
+                    this.currentExploredRooms.add(currentRoom);
                     System.out.println("You've entered another room");
-                    return true;
+                    hasMoved = true;
                 }
                 else {
-                    System.out.println("The door is looked you need a key to open it");
-                    return false;
+                    System.out.println("The room is empty, you cannot go in");
                 }
-
+            }
+            else {
+                System.out.println("The door is looked, you need a key to open it");
             }
         }
-        System.out.println("Couldn't find any entrance with that name");
-        return false;
+        else {
+            System.out.println("Unable to find an entrance called : " + entranceLocation);
+        }
+
+        return hasMoved;
     }
 
     public Boolean pickItem(String itemName){
@@ -274,13 +281,9 @@ public class Game {
     }
 
     private Boolean useAsKey(KeyItem key){
-        StringBuilder allOpenEntrances = new StringBuilder();
         boolean hasBeenUsed = false;
         if (confirmChoice()){
-            for (Entrance entrance : this.currentRoom.getAllOpenEntrances()){
-                allOpenEntrances.append(entrance.getPosition()).append("\n");
-            }
-            String selectedEntrance = InputController.readString("Select which entrance to open\n" + allOpenEntrances);
+            String selectedEntrance = InputController.readString("Select which entrance to open\n");
             if (this.currentRoom.getEntrance(selectedEntrance) != null){
                 if (!this.currentRoom.getEntrance(selectedEntrance).isOpen()){
                     this.currentRoom.getEntrance(selectedEntrance).setOpen(true);

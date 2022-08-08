@@ -5,11 +5,11 @@ import game.Game;
 import game.items.Apple;
 import game.items.Key;
 import game.items.template.Item;
-import game.map.room.door.Entrance;
 import zoo.Zoo;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Main {
@@ -29,8 +29,6 @@ public class Main {
                 "Carciofi", "Melanzane", "Tartufo", "Stufato d'erba", "Olive", "Cereali",
                 "Sushi", "Miele", "Anguille", "Spaghetti", "Bananane", "Grasso", "Abbacchio",
                 "Ciambellone", "Cozze", "Mozzarelle", "Carciofini", "risotto nero"};
-
-        String[] possibleEntrances = {"north", "east", "ovest"};
 
         // creation of the zoo
         int zooSize = 12;
@@ -61,11 +59,12 @@ public class Main {
         Zoo zoo = new Zoo();
 
         List<Item> items = new ArrayList<>();
-        Set<Entrance> entrances = new HashSet<>();
+        Set<String> entrances = new HashSet<>();
 
-        for (int i = 0; i < possibleEntrances.length; i++){
-            entrances.add(new Entrance(rand.nextBoolean(), possibleEntrances[i]));
-        }
+        entrances.add("north");
+        entrances.add("south");
+        entrances.add("east");
+        entrances.add("ovest");
 
        for(int i = 0; i < zooSize; i++){
             if(rand.nextInt(3) == 0){
@@ -103,14 +102,22 @@ public class Main {
        items.add(new Apple("common apple",2));
        items.add(new Key("pawtropolis key",10));
 
-        Game newGame = new Game(zoo, items,entrances);
-        newGame.startGame();
+       // Game newGame = new Game(zoo, items,entrances);
+       // newGame.startGame();
+        List<String> predefinedPath = new ArrayList<>();
 
-        /* TODO priorità :
-        // fare pulizia del codice []
-        // cambiare le liste in sets dove è necessario [x]
-        // guarda la classe game dei todo [x]
-           implementa bene ROOM (Guarda la classe Room) []
-        */
+        predefinedPath.add("north");
+        predefinedPath.add("north");
+        predefinedPath.add("north");
+        predefinedPath.add("east");
+        predefinedPath.add("east");
+        predefinedPath.add("east");
+        predefinedPath.add("east");
+
+
+        Game game = new Game(zoo,items,entrances,2,2,predefinedPath);
+        game.startGame();
+        //game.printMap();
+
     }
 }

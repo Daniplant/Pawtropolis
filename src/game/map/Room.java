@@ -1,9 +1,10 @@
-package game.map.room;
+package game.map;
 
 import game.items.template.Item;
 import game.map.room.door.Entrance;
 import zoo.Zoo;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -62,6 +63,33 @@ public class Room {
         this.entrances = entrances;
     }
 
+    public Set<Entrance> getAllOpenEntrances(){
+        Set<Entrance> openEntrances = new HashSet<>();
+        for (Entrance entrance : this.entrances){
+            if (entrance.isOpen()){
+                openEntrances.add(entrance);
+            }
+        }
+        return openEntrances;
+    }
+    public Set<Entrance> getAllClosedEntrances(){
+        Set<Entrance> openEntrances = new HashSet<>();
+        for (Entrance entrance : this.entrances){
+            if (!entrance.isOpen()){
+                openEntrances.add(entrance);
+            }
+        }
+        return openEntrances;
+    }
+
+    public Entrance getEntrance(String position){
+        for (Entrance entrance : this.entrances){
+            if (position.equals(entrance.getPosition())){
+                return entrance;
+            }
+        }
+        return null;
+    }
     public Boolean deleteItem(String itemName){
         return this.items.remove(getItem(itemName));
     }

@@ -1,10 +1,12 @@
 package game.randomizer;
 
 import game.items.template.Item;
-import game.map.room.Room;
+
+import game.map.Room;
 import game.map.room.door.Entrance;
 import models.animalBaseModel.Animal;
 import zoo.Zoo;
+
 
 import java.time.LocalDate;
 import java.util.*;
@@ -12,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Randomizer {
     // This is only a class for randomize everything that I need,
-
     private Randomizer(){
     }
 
@@ -102,7 +103,6 @@ public class Randomizer {
     }
 
     public static Zoo randomizeZooPerRange(Zoo zoo, int rangePerSpecie){
-        // TODO: trova un modo per randomizzare lo zoo [x]
         Random random = new Random();
         Zoo randomZoo = new Zoo();
         List<Class<? extends Animal>> specie = zoo.getAllSpecies();
@@ -140,60 +140,28 @@ public class Randomizer {
         return randomZoo;
     }
 
-    public static void randomizeEntranceStates(Set<Entrance> entrances,int maxOpenEntrances){
-        if (entrances.size() == 0) return;
-        int alreadyOpenEntrances = 0;
+    public static Set<Entrance> randomizeEntrances(Set<String> entrances,int maxOpenEntrances){
         int i = 0;
-        Entrance randEntrance;
-        Set<Entrance> usedEntrances = new HashSet<>();
-        for (Entrance entrance : entrances){
-            if (entrance.isOpen()){
-                alreadyOpenEntrances++;
-            }
+        Set<Entrance> randEntrances = new HashSet<>();
+        for (String entrance : entrances){
+            randEntrances.add(new Entrance(false, entrance));
         }
-
-
-        while (alreadyOpenEntrances != maxOpenEntrances){
-            randEntrance = randomizeSet(entrances);
-            if (!usedEntrances.contains(randEntrance)){
-                if (alreadyOpenEntrances < maxOpenEntrances){
-                    randEntrance.setOpen(true);
-                    alreadyOpenEntrances++;
-                } else {
-                    randEntrance.setOpen(false);
-                    alreadyOpenEntrances--;
-                }
-                usedEntrances.add(randEntrance);
-            }
-        }
-
-        Entrance savedEntrance;
-        Entrance savedOpenEntrance = null;
-        Entrance savedClosedEntrance = null;
 
         while (i < maxOpenEntrances){
-            savedEntrance = randomizeSet(entrances);
-            if (savedEntrance.isOpen()){
-                savedOpenEntrance = savedEntrance;
-            } else {
-                savedClosedEntrance = savedEntrance;
-            }
-            if (savedOpenEntrance != null && savedClosedEntrance != null){
-                savedOpenEntrance.setOpen(false);
-                savedClosedEntrance.setOpen(true);
-                i++;
-            }
-
+            Randomizer.randomizeSet(randEntrances).setOpen(true);
+            i++;
         }
+        return randEntrances;
     }
 
-    public static Room randomizeRoom(List<Item> items, Zoo animals, Set<Entrance> entrances,
-                                     int rangeItem, int rangeAnimals, int maxOpenEntrances){
 
-        randomizeEntranceStates(entrances,maxOpenEntrances);
+    public static Room randomizeRoom(List<Item> items, Zoo animals, Set<String> entrances,
+                                     int rangeItem, int rangeAnimals, int minOpenEntrances){
+
+        //randomizeEntranceStates(entrances,maxOpenEntrances);
         return new Room(randomizeRangeList(items,rangeItem,false),
                 randomizeZoo(animals,rangeAnimals),
-                entrances);
+                Randomizer.randomizeEntrances(entrances, minOpenEntrances));
     }
 }
 

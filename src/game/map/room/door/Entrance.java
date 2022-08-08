@@ -1,13 +1,18 @@
 package game.map.room.door;
 
-public class Entrance {
 
+import game.map.Room;
+
+public class Entrance {
     private boolean isOpen;
     private String position;
+
+    private Room nextRoom;
 
     public Entrance(boolean state, String position) {
         this.isOpen = state;
         this.position = position;
+        this.nextRoom = null;
     }
 
     public boolean isOpen() {
@@ -26,6 +31,12 @@ public class Entrance {
         this.position = position;
     }
 
+    public void setNextRoom(Room room){
+        this.nextRoom = room;
+    }
 
+    public Room getNextRoom(){
+        return this.nextRoom;
+    }
 
 }

@@ -1,12 +1,11 @@
 package game.bag;
 
 import game.items.template.Item;
-import game.map.room.Room;
+import game.map.Room;
+
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class Bag {
 
@@ -14,6 +13,7 @@ public class Bag {
     private final int totalSlots;
 
     private int slotUsed;
+
 
     public Bag(int totalSlots){
         this.itemList = new ArrayList<>();
@@ -55,13 +55,18 @@ public class Bag {
     public Boolean deleteItem(String name){
         if (getItem(name) != null){
             this.itemList.remove(getItem(name));
+            this.slotUsed -= getItem(name).getRequiredSlotSpace();
             return true;
         }
         return false;
     }
 
     public Boolean deleteItem(Item item){
-        return this.itemList.remove(item);
+        if (itemList.contains(item)){
+            this.slotUsed -= item.getRequiredSlotSpace();
+            return this.itemList.remove(item);
+        }
+        return null;
     }
 
     public Boolean dropItem(Item item, Room room){
